@@ -15,7 +15,7 @@ Este diretório contém listas de exercícios relacionados à disciplina de Banc
 
 ## Requisitos
 
-- Sistema de Gerenciamento de Banco de Dados (SGBD): MySQL (versão X.X.X)
+- Sistema de Gerenciamento de Banco de Dados (SGBD): MySQL (versão 8.0.34)
 - Ferramenta de Administração: MySQL Workbench
 - Linguagem de Programação: SQL
 

@@ -52,6 +52,8 @@ Resposta:
 
 Modelo ER:
 
+![Exercicio3](https://github.com/Andessonreis/DataQueryQuests/assets/105820333/e6eefd32-6310-4aa0-8de8-250078b49426)
+
 
 Exercício 04 - Escola
 

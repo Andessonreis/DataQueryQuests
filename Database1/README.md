@@ -21,6 +21,6 @@ Este diretório contém listas de exercícios relacionados à disciplina de Banc
 
 ## Licença
 
-Este conjunto de exercícios é licenciado sob a Licença MIT. Consulte o arquivo [LICENSE](database1/LICENSE) para obter mais detalhes.
+Este conjunto de exercícios é licenciado sob a Licença MIT. Consulte o arquivo [LICENSE](Database1/LICENSE) para obter mais detalhes.
 
 ---

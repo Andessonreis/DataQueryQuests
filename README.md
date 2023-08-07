@@ -8,7 +8,7 @@ Este repositório foi criado para armazenar exercícios das disciplinas de Banco
 
 ## Requisitos Gerais
 
-- Sistema de Gerenciamento de Banco de Dados (SGBD): PostgreSQL para `database2`, MySQL para `database1`
+- Sistema de Gerenciamento de Banco de Dados (SGBD): MySQL para `database1`, PostgreSQL para `database2`
 - Ferramenta de Administração: pgAdmin (para PostgreSQL) e MySQL Workbench (para MySQL)
 - Linguagem de Programação: SQL
 

@@ -32,6 +32,7 @@ j. O empréstimo possui um custo por dia e uma situação (ativo ou inativo), es
 Resposta:
 
 Modelo ER:
+
 ![Exercicio2](https://github.com/Andessonreis/DataQueryQuests/assets/105820333/28190eff-6fd1-439a-9c0e-f336659a0071)
 
 Exercício 03 - Clínica

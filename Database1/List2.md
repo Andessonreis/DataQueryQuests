@@ -1,4 +1,4 @@
-# Lista de Exercícios 1 – Modelagem Entidade Relacionamento (Conceitual)
+# Lista de Exercícios 1 – Modelo Relacional (Conceitual)
 
 ## Exercício 01 - Locadora de Veículos
 
@@ -7,17 +7,17 @@ Elabore um modelo ER para uma LOCADORA DE VEÍCULOS com base nos requisitos e es
 a. A entidade CARRO deve possuir: marca, modelo, placa, país de origem, quilometragem, preço por dia;
 b. A entidade CLIENTE deve possuir: nome, endereço, cpf, pendência, telefone;
 c. MARCA deve ser descrito como uma entidade;
-d. Um CLIENTE pode ALUGAR vários CARROS;
+d. Um CLIENTE pode ALUGAR vários CARROS.
 
 **Resposta:**
 
 *Modelo ER:*
 
-![Exercicio1](https://github.com/Andessonreis/DataQueryQuests/assets/105820333/d7d667f5-7a33-48ab-8526-37bc72272c51)
+
 
 ---
 
-Exercício 02 - Biblioteca
+## Exercício 02 - Biblioteca
 
 Elabore um modelo ER para uma BIBLIOTECA com base nos requisitos e especificações abaixo:
 
@@ -36,11 +36,12 @@ j. O empréstimo possui um custo por dia e uma situação (ativo ou inativo), es
 
 *Modelo ER:*
 
-![Exercicio2](https://github.com/Andessonreis/DataQueryQuests/assets/105820333/28190eff-6fd1-439a-9c0e-f336659a0071)
+.
+
 
 ---
 
-Exercício 03 - Clínica
+## Exercício 03 - Clínica
 
 Elabore um modelo ER para uma CLINICA com base nos requisitos e especificações abaixo:
 
@@ -57,11 +58,11 @@ h. A ESPECIALIDADE deve ter um órgão de registro vinculado.
 
 *Modelo ER:*
 
-![Exercicio3](https://github.com/Andessonreis/DataQueryQuests/assets/105820333/e6eefd32-6310-4aa0-8de8-250078b49426)
+.
 
 ---
 
-Exercício 04 - Escola
+## Exercício 04 - Escola
 
 Elabore um modelo ER para uma ESCOLA com base nos requisitos e especificações abaixo:
 
@@ -71,12 +72,12 @@ c. DISCIPLINA deve ser uma entidade;
 d. TURMA deve ser uma entidade;
 e. Um PROFESSOR pode estar em várias TURMAS;
 f. Um PROFESSOR pode ministrar várias DISCIPLINAS;
-g. Um ALUNO pode estar em apenas uma TURMA;
+g. Um ALUNO pode estar em apenas uma TURMA.
 
 **Resposta:**
 
 *Modelo ER:*
 
-![Exercicio4](https://github.com/Andessonreis/DataQueryQuests/assets/105820333/2827574a-10fd-4063-b7ff-f110c724d394)
+.
 
 ---

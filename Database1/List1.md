@@ -12,9 +12,7 @@ Resposta:
 
 Modelo ER:
 
-
-
-
+![Exercicio1](https://github.com/Andessonreis/DataQueryQuests/assets/105820333/d7d667f5-7a33-48ab-8526-37bc72272c51)
 
 Exercício 02 - Biblioteca
 
@@ -35,7 +33,6 @@ Resposta:
 
 
 Modelo ER:
-
 
 
 Exercício 03 - Clínica

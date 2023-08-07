@@ -70,3 +70,7 @@ g. Um ALUNO pode estar em apenas uma TURMA;
 Resposta:
 
 Modelo ER:
+
+![Exercicio4](https://github.com/Andessonreis/DataQueryQuests/assets/105820333/2827574a-10fd-4063-b7ff-f110c724d394)
+
+

@@ -78,6 +78,5 @@ g. Um ALUNO pode estar em apenas uma TURMA.
 
 *Modelo ER:*
 
-.
 
 ---

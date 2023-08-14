@@ -1,6 +1,6 @@
 ## Notas da Aula - 11/08
 
-Nesta aula, aprendemos a importância de manipular dados do EMAC (Educação e Matrícula do Ensino Superior) das instituições de ensino. O foco foi na transformação e limpeza dos dados, incluindo a conversão de tipos de dados para melhor análise. Abaixo está o código discutido durante a aula:
+Nesta aula, aprendemos a manipular dados do EMAC (Educação e Matrícula do Ensino Superior) das instituições de ensino. O foco foi na transformação e limpeza dos dados, incluindo a conversão de tipos de dados para melhor análise. Abaixo está o código discutido durante a aula:
 
 ```sql
 -- Remover a tabela cursos (caso já exista)

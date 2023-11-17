@@ -63,10 +63,10 @@ while True:
             print("\nSeção especifica:")
             for resultado in resultados:
                 numero_sala, nome_filme, data_sessao, horario_sessao, poltrona_venda = resultado
-                print(f"Numero Sala: {numero_sala}, Nome Filme: {nome_filme}, Data Sessao: {data_sessao}, Horario Sessao: {horario_sessao}, Poltrona Venda: {poltrona_venda}")
+                print(f"Numero Sala: {numero_sala}| Nome Filme: {nome_filme}| Data Sessao: {data_sessao}| Horario Sessao: {horario_sessao}| Poltrona Venda: {poltrona_venda}")
         else:
             print("Nenhum resultado encontrado para a sessao especificada.")
-        print('-' * 80 + '\n')
+        print('-' * 90 + '\n')
             
     elif opcao == 4:
         
@@ -74,11 +74,12 @@ while True:
         pesquisar = ("SELECT * FROM lista_espera")
         cursor.execute(pesquisar)
         resultado = cursor.fetchall()
+
         print('\nLista de Espera: ')
         for i in resultado:
-            print(f"Codigo sessão: {i[0]}, Codigo cliente: {i[1]}, Poltrona: {i[2]}, Data de registro: {i[3]}")
-        print('-' * 20)
-        
+            print(f"Codigo sessão: {i[0]}| Codigo cliente: {i[1]}| Poltrona: {i[2]}| Data de registro: {i[3]}")
+        print('-' * 95 + '\n')
+
 
 cursor.close()
 consulta.close()

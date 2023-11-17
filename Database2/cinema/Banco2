@@ -1,0 +1,245 @@
+CREATE TABLE cliente (
+    cod_cliente SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE filme (
+    cod_filme SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE salas (
+    cod_sala SERIAL PRIMARY KEY,
+    poltronas INTEGER NOT NULL
+);
+
+CREATE TABLE sessoes (
+    cod_sessao SERIAL PRIMARY KEY,
+    data DATE NOT NULL,
+    horario TIME NOT NULL,
+    cod_filme INTEGER REFERENCES filme(cod_filme),
+    cod_sala INTEGER REFERENCES salas(cod_sala)
+);
+
+CREATE TABLE vendas (
+    cod_sessao INTEGER REFERENCES sessoes(cod_sessao),
+    cod_cliente INTEGER REFERENCES cliente(cod_cliente),
+    poltrona INTEGER,
+    PRIMARY KEY (cod_sessao, cod_cliente),
+    CHECK (poltrona IS NOT NULL)
+);
+
+-- Inserir dados na tabela cliente
+INSERT INTO cliente (nome) VALUES
+    ('João Silva'),
+    ('Maria Oliveira'),
+    ('Pedro Santos'),
+    ('Ana Costa');
+
+-- Inserir dados na tabela filme
+INSERT INTO filme (nome) VALUES
+    ('O Poderoso Chefão'),
+    ('Cidadão Kane'),
+    ('Pulp Fiction'),
+    ('Matrix');
+
+-- Inserir dados na tabela salas
+INSERT INTO salas (poltronas) VALUES
+    (50),
+    (60),
+    (40),
+    (30);
+
+-- Inserir dados na tabela sessoes
+INSERT INTO sessoes (data, horario, cod_filme, cod_sala) VALUES
+    ('2023-11-20', '18:00:00', 1, 1),
+    ('2023-11-21', '19:30:00', 2, 2),
+    ('2023-11-22', '20:15:00', 3, 3),
+    ('2023-11-23', '21:00:00', 4, 4);
+
+SELECT * FROM vendas;
+SELECT * FROM cliente;
+SELECT * FROM sessoes;
+SELECT * FROM filme;
+-- Função de consultar sessoes
+
+CREATE OR REPLACE FUNCTION consulta_sessoes()
+RETURNS TABLE (
+    numero_sala INTEGER,
+    nome_filme VARCHAR(255),
+    data_sessao DATE,
+    horario_sessao TIME,
+    poltrona_venda INTEGER
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        se.cod_sala AS numero_sala,
+        f.nome AS nome_filme,
+        se.data AS data_sessao,
+        se.horario AS horario_sessao,
+        ve.poltrona AS poltrona_venda
+    FROM
+        vendas ve
+        JOIN cliente c ON ve.cod_cliente = c.cod_cliente
+        JOIN sessoes se ON ve.cod_sessao = se.cod_sessao
+        JOIN filme f ON se.cod_filme = f.cod_filme;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Chamada da função
+SELECT * FROM consulta_sessoes();
+
+-- criado função para consultar especifica
+CREATE OR REPLACE FUNCTION consulta_sessao_especifica(codigo_sessao INTEGER)
+RETURNS TABLE (
+    numero_sala INTEGER,
+    nome_filme VARCHAR(255),
+    data_sessao DATE,
+    horario_sessao TIME,
+    poltrona_venda INTEGER
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        se.cod_sala AS numero_sala,
+        f.nome AS nome_filme,
+        se.data AS data_sessao,
+        se.horario AS horario_sessao,
+        ve.poltrona AS poltrona_venda
+    FROM
+        vendas ve
+        JOIN cliente c ON ve.cod_cliente = c.cod_cliente
+        JOIN sessoes se ON ve.cod_sessao = se.cod_sessao
+        JOIN filme f ON se.cod_filme = f.cod_filme
+    WHERE
+        ve.cod_sessao = codigo_sessao;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM consulta_sessao_especifica(2);
+
+-- função de vendas de ingressos
+CREATE OR REPLACE FUNCTION venda_ingresso(x INTEGER, y INTEGER, z INTEGER)
+RETURNS VARCHAR(255)
+AS $$
+DECLARE
+    cliente_nome VARCHAR(255);
+BEGIN
+    -- x: Código da sessão
+    -- y: Código do cliente
+    -- z: Número da poltrona a ser vendida
+    
+    -- Obtém o nome do cliente com base no código do cliente
+    SELECT nome INTO cliente_nome FROM cliente WHERE cod_cliente = y;
+
+    -- Verifica se a poltrona já foi vendida para o mesmo cliente na mesma sessão
+    IF EXISTS (SELECT 1 FROM vendas WHERE cod_sessao = x AND cod_cliente = y AND poltrona = z) THEN
+        RETURN 'Você já comprou ingresso para esta poltrona nesta sessão';
+    ELSE
+        -- Verifica se a poltrona já foi vendida para outro cliente na mesma sessão
+        IF EXISTS (SELECT 1 FROM vendas WHERE cod_sessao = x AND poltrona = z AND cod_cliente <> y) THEN
+            RETURN 'Esta poltrona já foi vendida para outro cliente';
+        ELSE
+            -- Verifica se há poltronas disponíveis para a sessão e se a poltrona desejada está dentro do limite
+            IF (
+                (SELECT COUNT(*) FROM vendas WHERE cod_sessao = x) <= (SELECT poltronas FROM salas WHERE cod_sala = (SELECT cod_sala FROM sessoes WHERE cod_sessao = x))
+                AND z <= (SELECT poltronas FROM salas WHERE cod_sala = (SELECT cod_sala FROM sessoes WHERE cod_sessao = x))
+            ) THEN
+                -- Realiza a venda inserindo os dados na tabela vendas
+                INSERT INTO vendas VALUES (x, y, z);
+                -- Retorna uma mensagem indicando que a venda foi realizada com sucesso e o nome do cliente
+                RETURN 'Venda realizada com sucesso para o cliente ' || cliente_nome;
+            ELSE
+                -- Retorna uma mensagem indicando que não há poltronas disponíveis para essa sessão
+                RETURN 'Não há poltronas disponíveis para essa sessão';
+            END IF;
+        END IF;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+    -- x: Código da sessão
+    -- y: Código do cliente
+    -- z: Número da poltrona a ser vendida
+ 
+-- FUNÇÃO VENDAINGRESSO MODIFICADO PARA USAR A TRIGGER
+CREATE OR REPLACE FUNCTION venda_ingresso(x INTEGER, y INTEGER, z INTEGER)
+RETURNS VARCHAR(255)
+AS $$
+DECLARE
+    cliente_nome VARCHAR(255);
+BEGIN
+    -- x: Código da sessão
+    -- y: Código do cliente
+    -- z: Número da poltrona a ser vendida
+    
+    -- Obtém o nome do cliente com base no código do cliente
+    SELECT nome INTO cliente_nome FROM cliente WHERE cod_cliente = y;
+
+    -- Verifica se a poltrona já foi vendida para o mesmo cliente na mesma sessão
+    IF EXISTS (SELECT 1 FROM vendas WHERE cod_sessao = x AND cod_cliente = y AND poltrona = z) THEN
+        RETURN 'Você já comprou ingresso para esta poltrona nesta sessão';
+    ELSE
+        -- Verifica se a poltrona já foi vendida para outro cliente na mesma sessão
+        IF EXISTS (SELECT 1 FROM vendas WHERE cod_sessao = x AND poltrona = z AND cod_cliente <> y) THEN
+            -- Adiciona o cliente à lista de espera
+            INSERT INTO lista_espera (cod_sessao, cod_cliente, poltrona) VALUES (x, y, z);
+            RETURN 'Esta poltrona já foi vendida para outro cliente. Adicionado à lista de espera.';
+        ELSE
+            -- Verifica se há poltronas disponíveis para a sessão e se a poltrona desejada está dentro do limite
+            IF (
+                (SELECT COUNT(*) FROM vendas WHERE cod_sessao = x) <= (SELECT poltronas FROM salas WHERE cod_sala = (SELECT cod_sala FROM sessoes WHERE cod_sessao = x))
+                AND z <= (SELECT poltronas FROM salas WHERE cod_sala = (SELECT cod_sala FROM sessoes WHERE cod_sessao = x))
+            ) THEN
+                -- Realiza a venda inserindo os dados na tabela vendas
+                INSERT INTO vendas VALUES (x, y, z);
+                RETURN 'Venda realizada com sucesso para o cliente ' || cliente_nome;
+            ELSE
+                RETURN 'Não há poltronas disponíveis para essa sessão';
+            END IF;
+        END IF;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TABLE lista_espera (
+    cod_sessao INTEGER,
+    cod_cliente INTEGER,
+    poltrona INTEGER,
+    data_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--Criação da trigger para venda de ingresso + lista de espera
+CREATE OR REPLACE FUNCTION venda_ingresso_trigger()
+RETURNS TRIGGER
+AS $$
+BEGIN
+    -- Verifica se a poltrona já foi vendida para outro cliente na mesma sessão
+    IF EXISTS (SELECT 1 FROM vendas WHERE cod_sessao = NEW.cod_sessao AND poltrona = NEW.poltrona AND cod_cliente <> NEW.cod_cliente) THEN
+        -- Adiciona o cliente à lista de espera
+        INSERT INTO lista_espera (cod_sessao, cod_cliente, poltrona) VALUES (NEW.cod_sessao, NEW.cod_cliente, NEW.poltrona);
+        -- Retorna uma mensagem indicando que a poltrona está ocupada e o cliente foi adicionado à lista de espera
+        RAISE NOTICE 'Esta poltrona já foi vendida para outro cliente. Adicionado à lista de espera.';
+    ELSE
+        -- Retorna uma mensagem indicando que a venda foi realizada com sucesso
+        RAISE NOTICE 'Venda realizada com sucesso para a poltrona %, cliente %.', NEW.poltrona, NEW.cod_cliente;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Cria o trigger que chama a função antes de inserir uma venda
+CREATE OR REPLACE TRIGGER pre_venda_ingresso
+BEFORE INSERT ON vendas
+FOR EACH ROW
+EXECUTE FUNCTION venda_ingresso_trigger();
+
+SELECT venda_ingresso(1, 4, 10);
+select * from vendas;
+select * from lista_espera
+

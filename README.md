@@ -1,10 +1,10 @@
 # DataQueryQuests
 
-Este repositório contém exercícios relacionados a Bancos de Dados, organizados em dois diretórios principais: `database1` e `database2`.
+Este repositório contém projetos e exercícios relacionados a Bancos de Dados, organizados em dois diretórios principais: `database1` e `database2`.
 
 ## Descrição
 
-Este repositório foi criado para armazenar exercícios das disciplinas de Banco de Dados 1 e 2 do curso de Análise e Desenvolvimento de Sistemas do IFBA (Instituto Federal da Bahia).
+Este repositório foi criado para armazenar projetos e exercícios das disciplinas de Banco de Dados 1 e 2 do curso de Análise e Desenvolvimento de Sistemas do IFBA (Instituto Federal da Bahia).
 
 ## Requisitos Gerais
 

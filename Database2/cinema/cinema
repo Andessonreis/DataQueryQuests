@@ -1,18 +1,22 @@
+-- Criação da tabela cliente
 CREATE TABLE cliente (
     cod_cliente SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL
 );
 
+-- Criação da tabela filme
 CREATE TABLE filme (
     cod_filme SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL
 );
 
+-- Criação da tabela salas
 CREATE TABLE salas (
     cod_sala SERIAL PRIMARY KEY,
     poltronas INTEGER NOT NULL
 );
 
+-- Criação da tabela sessoes
 CREATE TABLE sessoes (
     cod_sessao SERIAL PRIMARY KEY,
     data DATE NOT NULL,
@@ -21,12 +25,21 @@ CREATE TABLE sessoes (
     cod_sala INTEGER REFERENCES salas(cod_sala)
 );
 
+-- Criação da tabela vendas
 CREATE TABLE vendas (
     cod_sessao INTEGER REFERENCES sessoes(cod_sessao),
     cod_cliente INTEGER REFERENCES cliente(cod_cliente),
     poltrona INTEGER,
     PRIMARY KEY (cod_sessao, cod_cliente),
     CHECK (poltrona IS NOT NULL)
+);
+
+-- Criação da tabela lista_espera
+CREATE TABLE lista_espera (
+    cod_sessao INTEGER,
+    cod_cliente INTEGER,
+    poltrona INTEGER,
+    data_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Inserir dados na tabela cliente
@@ -57,12 +70,7 @@ INSERT INTO sessoes (data, horario, cod_filme, cod_sala) VALUES
     ('2023-11-22', '20:15:00', 3, 3),
     ('2023-11-23', '21:00:00', 4, 4);
 
-SELECT * FROM vendas;
-SELECT * FROM cliente;
-SELECT * FROM sessoes;
-SELECT * FROM filme;
 -- Função de consultar sessoes
-
 CREATE OR REPLACE FUNCTION consulta_sessoes()
 RETURNS TABLE (
     numero_sala INTEGER,
@@ -128,10 +136,6 @@ AS $$
 DECLARE
     cliente_nome VARCHAR(255);
 BEGIN
-    -- x: Código da sessão
-    -- y: Código do cliente
-    -- z: Número da poltrona a ser vendida
-    
     -- Obtém o nome do cliente com base no código do cliente
     SELECT nome INTO cliente_nome FROM cliente WHERE cod_cliente = y;
 
@@ -160,22 +164,14 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
-
-    -- x: Código da sessão
-    -- y: Código do cliente
-    -- z: Número da poltrona a ser vendida
  
--- FUNÇÃO VENDAINGRESSO MODIFICADO PARA USAR A TRIGGER
+-- FUNÇÃO VENDA INGRESSO MODIFICADO PARA USAR A TABELA LISTA DE ESPERA
 CREATE OR REPLACE FUNCTION venda_ingresso(x INTEGER, y INTEGER, z INTEGER)
 RETURNS VARCHAR(255)
 AS $$
 DECLARE
     cliente_nome VARCHAR(255);
-BEGIN
-    -- x: Código da sessão
-    -- y: Código do cliente
-    -- z: Número da poltrona a ser vendida
-    
+BEGIN    
     -- Obtém o nome do cliente com base no código do cliente
     SELECT nome INTO cliente_nome FROM cliente WHERE cod_cliente = y;
 
@@ -205,14 +201,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-
-CREATE TABLE lista_espera (
-    cod_sessao INTEGER,
-    cod_cliente INTEGER,
-    poltrona INTEGER,
-    data_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 --Criação da trigger para venda de ingresso + lista de espera
 CREATE OR REPLACE FUNCTION venda_ingresso_trigger()
 RETURNS TRIGGER
@@ -239,7 +227,28 @@ BEFORE INSERT ON vendas
 FOR EACH ROW
 EXECUTE FUNCTION venda_ingresso_trigger();
 
-SELECT venda_ingresso(1, 4, 10);
-select * from vendas;
-select * from lista_espera
+--\\CHAMADAS\\--
 
+-- Seleciona todos os registros da tabela vendas
+SELECT * FROM vendas;
+
+-- Seleciona todos os registros da tabela cliente
+SELECT * FROM cliente;
+
+-- Seleciona todos os registros da tabela sessoes
+SELECT * FROM sessoes;
+
+-- Seleciona todos os registros da tabela filme
+SELECT * FROM filme;
+
+-- Realiza uma venda de ingresso (Exemplo: venda_ingresso(sessao, cliente, poltrona))
+SELECT venda_ingresso(1, 3, 10);
+
+-- Seleciona todos os registros da tabela lista_espera
+SELECT * FROM lista_espera;
+
+-- Chama a função consulta_sessoes
+SELECT * FROM consulta_sessoes();
+
+-- Chama a função consulta_sessao_especifica para a sessão com o código 2
+SELECT * FROM consulta_sessao_especifica(2);

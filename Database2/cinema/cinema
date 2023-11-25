@@ -164,34 +164,7 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
-
-
---Criação da trigger para venda de ingresso + lista de espera
-CREATE OR REPLACE FUNCTION venda_ingresso_trigger()
-RETURNS TRIGGER
-AS $$
-BEGIN
-    -- Verifica se a poltrona já foi vendida para outro cliente na mesma sessão
-    IF EXISTS (SELECT * FROM vendas WHERE cod_sessao = NEW.cod_sessao AND poltrona = NEW.poltrona AND cod_cliente <> NEW.cod_cliente) THEN
-        -- Adiciona o cliente à lista de espera
-        INSERT INTO lista_espera (cod_sessao, cod_cliente, poltrona) VALUES (NEW.cod_sessao, NEW.cod_cliente, NEW.poltrona);
-        -- Retorna uma mensagem indicando que a poltrona está ocupada e o cliente foi adicionado à lista de espera
-        RAISE NOTICE 'Esta poltrona já foi vendida para outro cliente. Adicionado à lista de espera.';
-    ELSE
-        -- Retorna uma mensagem indicando que a venda foi realizada com sucesso
-        RAISE NOTICE 'Venda realizada com sucesso para a poltrona %, cliente %.', NEW.poltrona, NEW.cod_cliente;
-    END IF;
-
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Cria o trigger que chama a função antes de inserir uma venda
-CREATE OR REPLACE TRIGGER pre_venda_ingresso
-BEFORE INSERT ON vendas
-FOR EACH ROW
-EXECUTE FUNCTION venda_ingresso_trigger();
-
+-- Todo: Criar trigger:
 --\\CHAMADAS\\--
 
 -- Seleciona todos os registros da tabela vendas

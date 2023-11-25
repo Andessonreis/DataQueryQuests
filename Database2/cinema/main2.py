@@ -40,7 +40,7 @@ while True:
             num_poltrona = int(input("Digite o número da poltrona: "))
 
             cursor = consulta.cursor()
-            venda = ("SELECT venda_ingresso(%s, %s, %s)")
+            venda = ("SELECT venda_ingressos(%s, %s, %s)")
             cursor.execute(venda, (cod_sessao, cod_cliente, num_poltrona))
             resultado = cursor.fetchone()
 
@@ -54,7 +54,7 @@ while True:
         cursor = consulta.cursor()
         numero_sessao = int(input("Digite o numero da sessao: "))
 
-        pesquisar = ("SELECT * FROM consulta_sessao_especifica(%s)")
+        pesquisar = ("SELECT * FROM consulta_sessao_especificas(%s)")
         cursor.execute(pesquisar, (numero_sessao,))
 
         resultados = cursor.fetchall()
@@ -71,7 +71,7 @@ while True:
     elif opcao == 4:
         
         cursor = consulta.cursor()
-        pesquisar = ("SELECT * FROM lista_espera")
+        pesquisar = ("SELECT * FROM lista_esperas()")
         cursor.execute(pesquisar)
         resultado = cursor.fetchall()
 

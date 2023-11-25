@@ -164,42 +164,7 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
- 
--- FUNÇÃO VENDA INGRESSO MODIFICADO PARA USAR A TABELA LISTA DE ESPERA
-CREATE OR REPLACE FUNCTION venda_ingresso(x INTEGER, y INTEGER, z INTEGER)
-RETURNS VARCHAR(255)
-AS $$
-DECLARE
-    cliente_nome VARCHAR(255);
-BEGIN    
-    -- Obtém o nome do cliente com base no código do cliente
-    SELECT nome INTO cliente_nome FROM cliente WHERE cod_cliente = y;
 
-    -- Verifica se a poltrona já foi vendida para o mesmo cliente na mesma sessão
-    IF EXISTS (SELECT 1 FROM vendas WHERE cod_sessao = x AND cod_cliente = y AND poltrona = z) THEN
-        RETURN 'Você já comprou ingresso para esta poltrona nesta sessão';
-    ELSE
-        -- Verifica se a poltrona já foi vendida para outro cliente na mesma sessão
-        IF EXISTS (SELECT 1 FROM vendas WHERE cod_sessao = x AND poltrona = z AND cod_cliente <> y) THEN
-            -- Adiciona o cliente à lista de espera
-            INSERT INTO lista_espera (cod_sessao, cod_cliente, poltrona) VALUES (x, y, z);
-            RETURN 'Esta poltrona já foi vendida para outro cliente. Adicionado à lista de espera.';
-        ELSE
-            -- Verifica se há poltronas disponíveis para a sessão e se a poltrona desejada está dentro do limite
-            IF (
-                (SELECT COUNT(*) FROM vendas WHERE cod_sessao = x) <= (SELECT poltronas FROM salas WHERE cod_sala = (SELECT cod_sala FROM sessoes WHERE cod_sessao = x))
-                AND z <= (SELECT poltronas FROM salas WHERE cod_sala = (SELECT cod_sala FROM sessoes WHERE cod_sessao = x))
-            ) THEN
-                -- Realiza a venda inserindo os dados na tabela vendas
-                INSERT INTO vendas VALUES (x, y, z);
-                RETURN 'Venda realizada com sucesso para o cliente ' || cliente_nome;
-            ELSE
-                RETURN 'Não há poltronas disponíveis para essa sessão';
-            END IF;
-        END IF;
-    END IF;
-END;
-$$ LANGUAGE plpgsql;
 
 --Criação da trigger para venda de ingresso + lista de espera
 CREATE OR REPLACE FUNCTION venda_ingresso_trigger()
@@ -207,7 +172,7 @@ RETURNS TRIGGER
 AS $$
 BEGIN
     -- Verifica se a poltrona já foi vendida para outro cliente na mesma sessão
-    IF EXISTS (SELECT 1 FROM vendas WHERE cod_sessao = NEW.cod_sessao AND poltrona = NEW.poltrona AND cod_cliente <> NEW.cod_cliente) THEN
+    IF EXISTS (SELECT * FROM vendas WHERE cod_sessao = NEW.cod_sessao AND poltrona = NEW.poltrona AND cod_cliente <> NEW.cod_cliente) THEN
         -- Adiciona o cliente à lista de espera
         INSERT INTO lista_espera (cod_sessao, cod_cliente, poltrona) VALUES (NEW.cod_sessao, NEW.cod_cliente, NEW.poltrona);
         -- Retorna uma mensagem indicando que a poltrona está ocupada e o cliente foi adicionado à lista de espera
